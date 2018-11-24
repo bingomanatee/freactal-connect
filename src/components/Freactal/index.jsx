@@ -1,3 +1,5 @@
+
+import { StoreEngine, update } from '@wonderlandlabs/freactal-engine';
 import FreactalContext from './FreactalContext';
 import injectState from './injectState';
 import provideEngine from './provideEngine';
@@ -8,4 +10,5 @@ export {
   injectState,
   provideState,
   provideEngine,
+  update, StoreEngine,
 };
