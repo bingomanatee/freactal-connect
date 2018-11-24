@@ -2,7 +2,7 @@ import { Component } from 'react'; // eslint-disable-line import/no-extraneous-d
 
 import FreactalContext from '../FreactalContext';
 
-function injector(View) {
+function injector(View, customProps) {
   class InjectedView extends Component {
     get engineState() {
       return this.engine ? this.engine.state : {};
@@ -14,6 +14,19 @@ function injector(View) {
 
     get engine() {
       return this._engine;
+    }
+
+    get updatedProps() {
+      const propList = { ...this.props };
+      delete propList.children;
+
+      if (customProps) return customProps(propList, this.engine);
+
+      return Object.assign({}, propList, {
+        actions: this.engineActions,
+        effects: this.engineActions,
+        state: this.engineState,
+      });
     }
 
     set engine(engine) {
@@ -56,7 +69,7 @@ function injector(View) {
         <FreactalContext.Consumer>
           {(engine) => {
             this.engine = engine;
-            return <View {...this.props} state={this.engineState} actions={this.engineActions} />;
+            return <View {...this.updatedProps}>{ this.props.children}</View>;
           }}
         </FreactalContext.Consumer>
       );

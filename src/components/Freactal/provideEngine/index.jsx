@@ -1,9 +1,15 @@
 import { Component } from 'react'; // eslint-disable-line import/no-extraneous-dependencies
 import { StoreEngineReducer } from '@wonderlandlabs/freactal-engine';
 import FreactalContext from '../FreactalContext';
+import injectState from '../injectState';
 
-function createWrapper(engine) {
-  return function wrapper(View) {
+function provideEngine(engine, Target, injectToTarget) {
+  const wrapper = function wrapper(View) {
+    let InnerView = View;
+    if (injectToTarget) {
+      InnerView = injectState(View);
+    }
+
     class StatefulView extends Component {
       constructor(props) {
         super(props);
@@ -22,7 +28,7 @@ function createWrapper(engine) {
 
               return (
                 <FreactalContext.Provider value={providedEngine}>
-                  <View {...this.props} />
+                  <InnerView {...this.props} />
                 </FreactalContext.Provider>
               );
             }
@@ -34,6 +40,9 @@ function createWrapper(engine) {
 
     return StatefulView;
   };
+
+  if (Target) return wrapper(injectToTarget ? injectState(Target) : Target);
+  return wrapper;
 }
 
-export default createWrapper;
+export default provideEngine;

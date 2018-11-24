@@ -1,24 +1,18 @@
-import { PureComponent } from 'react';
+import { injectState } from '../Freactal';
 
-import injectState from '../injectState';
+const SampleChild = ({ a = '--', z = '--', increment = () => {} }) => (
+  <div style={({ border: '1px solid red' })}>
 
-class SampleChild extends PureComponent {
-  render() {
-    const state = this.props.state;
-    const actions = this.props.actions;
-    console.log('state:', state);
-    return (
-      <div style={({ border: '1px solid red' })}>
+    <h2>Child</h2>
 
-        <h2>Child</h2>
+    <div> a = {a}</div>
+    <div> z = {z}</div>
 
-        <div> a = {state ? state.a : '--'}</div>
-        <div> z = {state ? state.z : '--'}</div>
+    <button onClick={increment}>Increment</button>
+  </div>
+);
 
-        <button onClick={actions ? actions.increment : () => {}}>Increment</button>
-      </div>
-    );
-  }
-}
-
-export default injectState(SampleChild);
+export default injectState(
+  SampleChild,
+  (props, engine) => Object.assign({}, props, engine.state, engine.actions),
+);
