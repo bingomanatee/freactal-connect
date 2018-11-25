@@ -3,6 +3,14 @@ import { StoreEngineReducer, StoreEngine } from '@wonderlandlabs/freactal-engine
 import FreactalContext from '../FreactalContext';
 import injectState from './../injectState';
 
+/**
+ * Note - the Target/inject thing doesn't work - its a Babel/Webpack thing
+ *
+ * @param engineProps
+ * @param Target
+ * @param injectToTarget
+ * @returns {Component}
+ */
 function provideState(engineProps, Target, injectToTarget) {
   const wrapper = function wrapper(View) {
     let InnerView = View;

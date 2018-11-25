@@ -71,20 +71,14 @@ const WrappedRoot = wrapperFunction(Root);
  * 
  */
 
-const WrappedRoot = provideEngine(engine, Root);
+const WrappedRoot = provideEngine(engine)( Root);
 
 /**
  * --- but this WILL work.
  * 
  */
 
-const WrappedRoot = provideEngine(engine, injectState(Root));
-
-/**
- * method three: wrap directly and inject. This is exactly equal to the above (working) example.
- */
-
-const WrappedRoot = provideEngine(engine, Root, true);
+const WrappedRoot = provideEngine(engine)(injectState(Root));
 
 ```
 
@@ -172,8 +166,8 @@ class Root extends React.PureComponent {
   
 }
 
-const engine = new StoreEngine({a: 1, b: 2, }, {inc: (context) => {
-  return Object.assign({}, {a: this.context.state.a + 1});
+const engine = new StoreEngine({a: 1, b: 2, }, {inc: ({state}) => {
+  return Object.assign({}, {a: state.a + 1});
 }});
 
 /**
@@ -188,13 +182,7 @@ const WrappedRoot = wrapperFunction(Root);
  * method two: wrap directly
  */
 
-const WrappedRoot = provideEngine(engine, Root);
-
-/**
- * method three: wrap directly and inject.
- */
-
-const WrappedRoot = provideEngine(engine, Root, true);
+const WrappedRoot = provideEngine(engine)(Root);
 
 ```
 
@@ -214,7 +202,7 @@ before polling state again.
 
 ### Can I use Freactal 3 with pre-16.x React? 
 
-Freactal 3 relies on 16.3 Contexts. We will provide a 14.x flavor of freactal-connect soon that will accept
+Freactal 3 relies on 16.3 Contexts. We will provide a ...14.x friendly option soon that will accept
 legacy Context support. 
 
 ### Can I use Freactal 3 with "not React"? 

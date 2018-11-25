@@ -1,6 +1,6 @@
 {
   "name": "@wonderlandlabs/freactal-connect",
-  "version": "1.0.3",
+  "version": "1.0.6",
   "main": "build/Freactal.js",
   "license": "MIT",
   "scripts": {
@@ -22,6 +22,6 @@
     "react": "^16.6.3"
   },
   "dependencies": {
-    "@wonderlandlabs/freactal-engine": "^1.0.3"
+    "@wonderlandlabs/freactal-engine": "^1.0.5"
   }
 }

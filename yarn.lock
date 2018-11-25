@@ -365,10 +365,10 @@
     webpack-sources "1.0.1"
     worker-loader "^1.1.1"
 
-"@wonderlandlabs/freactal-engine@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@wonderlandlabs/freactal-engine/-/freactal-engine-1.0.3.tgz#f4a4f6290db65362b207ec0bd6577b48d8d4a49c"
-  integrity sha512-vkViCYURS2Z+/58K16jiP6Zvy57JyMPnknb6Q9zHT+dctH4970uVBYUkXZKV6rHA3dY4qUy2hPAAeXBSsu9VIw==
+"@wonderlandlabs/freactal-engine@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@wonderlandlabs/freactal-engine/-/freactal-engine-1.0.5.tgz#c9827f434c9f40536993d60b6e975c6073f5bf8a"
+  integrity sha512-qhD7vm1dUDM4vB1nW5mpnZICdIke1kxw0YNKyisHowWlvLgjUPJt232UHc62hylProCSo3ZAI653xLYUxXi9/g==
   dependencies:
     bottlejs "^1.7.1"
     lodash.clonedeep "^4.5.0"
