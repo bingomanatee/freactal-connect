@@ -1,76 +1,85 @@
-import { Component } from 'react'; // eslint-disable-line import/no-extraneous-dependencies
+/* eslint-disable react/no-multi-comp */
+import { Component, PureComponent } from 'react'; // eslint-disable-line import/no-extraneous-dependencies
 
 import FreactalContext from '../FreactalContext';
 
 function injector(View, customProps) {
-  class InjectedView extends Component {
-    get engineState() {
-      return this.engine ? this.engine.state : {};
-    }
+  class EngineInjector extends Component {
+    constructor(originalProps) {
+      super(originalProps);
+      const { props, engine } = originalProps;
 
-    get engineActions() {
-      return this.engine ? this.engine.actions : {};
-    }
-
-    get engine() {
-      return this._engine;
-    }
-
-    get updatedProps() {
-      const propList = { ...this.props };
-      delete propList.children;
-
-      if (customProps) return customProps(propList, this.engine);
-
-      return Object.assign({}, propList, {
-        actions: this.engineActions,
-        effects: this.engineActions,
-        state: this.engineState,
-      });
-    }
-
-    set engine(engine) {
-      if (engine === this._engine) return;
-      if (this._engineSubscriber) {
-        this._engineSubscriber.unsubscribe();
+      if (customProps) {
+        this.state = {
+          engine,
+          props,
+          passThrough: customProps(props, engine),
+        };
+      } else if (engine) {
+        this.state = ({
+          engine,
+          props,
+          passThrough: {
+            ...props, effects: engine.actions, actions: engine.actions, state: engine.state,
+          },
+        });
+      } else {
+        this.state = ({
+          engine,
+          props,
+          passThrough: {
+            ...props, effects: {}, actions: {}, state: {},
+          },
+        });
       }
+    }
 
-      if (engine) {
-        this._engineSubscriber = engine.subscribe(this.updateState(), this.engineError(), this.unsubscribe());
+    componentDidMount() {
+      if (this.state.engine) {
+        this._engineSubscription = this.state.engine.subscribe(({ state }) => {
+          this.setState({
+            passThrough: {
+              ...this.state.props,
+              actions: this.state.engine.actions,
+              state,
+            },
+          });
+        }, (err) => {
+          console.log('error:', err);
+        }, () => {
+          this.stopSub();
+        });
       }
-
-      this._engine = engine;
     }
 
-    updateState() {
-      const self = this;
-      return () => self.forceUpdate();
+    componentWillUnmount() {
+      this.stopSub();
     }
 
-    engineError(err) {
-      const self = this;
-      return () => {
-        console.log('freactal state error:', err, self.engine);
-      };
-    }
 
-    unsubscribe() {
-      const self = this;
-      return () => {
-        if (self._engineSubscriber) {
-          self._engineSubscriber.unsubscribe();
-          self._engineSubscriber = null;
-        }
-      };
+    stopSub() {
+      if (this._engineSubscription) {
+        this._engineSubscription.unsubscribe();
+        delete this._engineSubscription;
+      }
     }
 
     render() {
+      return <View {...this.state.passThrough}>{this.props.children}</View>;
+    }
+  }
+
+  class InjectedView extends PureComponent {
+    render() {
       return (
         <FreactalContext.Consumer>
-          {(engine) => {
-            this.engine = engine;
-            return <View {...this.updatedProps}>{ this.props.children}</View>;
-          }}
+          {
+            engine => (
+              <EngineInjector props={this.props} engine={engine}>
+                {this.props.children}
+              </EngineInjector>
+          )
+          }
         </FreactalContext.Consumer>
       );
     }

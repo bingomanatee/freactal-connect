@@ -1,6 +1,6 @@
 {
   "name": "@wonderlandlabs/freactal-connect",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "main": "build/Freactal.js",
   "license": "MIT",
   "scripts": {
@@ -13,8 +13,11 @@
     "@neutrinojs/airbnb": "^8.3.0",
     "@neutrinojs/jest": "^8.3.0",
     "@neutrinojs/react-components": "^8.3.0",
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.7.0",
     "neutrino": "^8.3.0",
     "prop-types": "^15.6.2",
+    "raf": "^3.4.1",
     "react": "^16.6.3",
     "react-dom": "^16.6.3"
   },
@@ -22,6 +25,7 @@
     "react": "^16.6.3"
   },
   "dependencies": {
-    "@wonderlandlabs/freactal-engine": "^1.0.5"
+    "@wonderlandlabs/freactal-engine": "^1.0.5",
+    "lodash.get": "^4.4.2"
   }
 }

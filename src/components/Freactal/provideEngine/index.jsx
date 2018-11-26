@@ -1,7 +1,7 @@
 import { Component } from 'react'; // eslint-disable-line import/no-extraneous-dependencies
-import { StoreEngineReducer } from '@wonderlandlabs/freactal-engine';
 import FreactalContext from '../FreactalContext';
 import injectState from '../injectState';
+import Combine from '../Combine';
 
 /**
  * note - the Target property doesn't seem to work - its a webpack/babel thing.
@@ -12,44 +12,59 @@ import injectState from '../injectState';
  * @returns {Component}
  */
 function provideEngine(engine, Target, injectToTarget) {
-  const wrapper = function wrapper(View) {
+  function wrapper(View) {
     let InnerView = View;
     if (injectToTarget) {
       InnerView = injectState(View);
     }
 
+
     class StatefulView extends Component {
+      static contextType = FreactalContext;
       constructor(props) {
         super(props);
         this.state = { engine };
       }
-
       render() {
-        let providedEngine = this.state.engine;
+        if (this.context) {
+          return (
+            <Combine engines={[this.context, this.state.engine]}>
+              <InnerView {...this.props} />
+            </Combine>
+          );
+        }
         return (
           <FreactalContext.Consumer>
             {
               (previousState) => {
-              if (previousState) {
-                providedEngine = new StoreEngineReducer([previousState, this.state.engine]);
-              }
+                if (previousState) {
+                  return (
+                    <Combine engines={[previousState, this.state.engine]}>
+                      <InnerView {...this.props} />
+                    </Combine>
+                  );
+                }
 
-              return (
-                <FreactalContext.Provider value={providedEngine}>
-                  <InnerView {...this.props} />
-                </FreactalContext.Provider>
-              );
-            }
+                return (
+                  <FreactalContext.Provider value={this.state.engine}>
+                    <InnerView {...this.props} />
+                  </FreactalContext.Provider>
+                );
+              }
             }
           </FreactalContext.Consumer>
         );
       }
     }
 
-    return StatefulView;
-  };
+    StatefulView.contextType = FreactalContext;
 
-  if (Target) return wrapper(injectToTarget ? injectState(Target) : Target);
+    return StatefulView;
+  }
+
+  if (Target) {
+    return wrapper(injectToTarget ? injectState(Target) : Target);
+  }
   return wrapper;
 }
 
