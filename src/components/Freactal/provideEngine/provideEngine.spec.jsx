@@ -33,12 +33,12 @@ describe('freactal3', () => {
       beforeEach(() => {
         state = { foo: 1, bar: [1, 2, 3] };
         actions = {
-          setFoo: (n) => {
-            state.foo = n;
+          setFoo: (actions, foo) => (state) => {
+            const out = Object.assign({}, state, { foo });
             if (next) {
-              next(state);
+              next(out);
             }
-            return state;
+            return out;
           },
         };
 
@@ -94,7 +94,7 @@ describe('freactal3', () => {
         let innerProps;
 
         const outerEngine = new StoreEngine({ a: 1, b: 'two' }, {
-          setA: update(({ state }, a) => ({ a })),
+          setA: update((actions, a) => state => ({ a })),
         });
         const innerEngine = new StoreEngine({ a: 2, c: [1, 2, 3] }, {
           addToC: update(({ state }, v) => {
@@ -104,17 +104,13 @@ describe('freactal3', () => {
         });
 
         beforeEach(() => {
-          const BaseOuterView = ({ state, actions, children }) => {
-            return (<span a={state.a}>{children}</span>);
-          };
+          const BaseOuterView = ({ state, actions, children }) => (<span a={state.a}>{children}</span>);
 
-          const BaseInnerView = ({ state, actions, children }) => {
-            return (
-              <div a={state.a} c={state.c}>
-                {children}
-              </div>
-            );
-          };
+          const BaseInnerView = ({ state, actions, children }) => (
+            <div a={state.a} c={state.c}>
+              {children}
+            </div>
+          );
           const OuterProvided = provideEngine(outerEngine)(injectState(BaseOuterView));
           const InnerProvided = provideEngine(innerEngine)(injectState(BaseInnerView));
 

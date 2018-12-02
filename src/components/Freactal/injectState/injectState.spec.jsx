@@ -29,10 +29,12 @@ describe('freactal3', () => {
       it('should accept data from an injected engine', () => {
         const state = { foo: 1, bar: [1, 2, 3] };
         const actions = {
-          setFoo: (n) => {
-            state.foo = n;
-            if (next) next(state);
-            return state;
+          setFoo: (actions, foo) => {
+            return state => {
+              let value = Object.assign({}, state, {foo});
+              if (next) next(value);
+              return value;
+            };
           },
         };
         let next;
@@ -76,10 +78,12 @@ describe('freactal3', () => {
       it('should accept data from an injected engine', () => {
         const state = { foo: 1, bar: [1, 2, 3] };
         const actions = {
-          setFoo: (n) => {
-            state.foo = n;
-            if (next) next(state);
-            return state;
+          setFoo: (actions, foo) => {
+            return state => {
+              let value = Object.assign({}, state, {foo});
+              if (next) next(value);
+              return value;
+            };
           },
         };
         let next;
