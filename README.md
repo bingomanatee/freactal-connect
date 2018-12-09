@@ -1,6 +1,6 @@
 This is a library for connecting Freactal StoreEngines to React components. 
 
-It uses the @wonderlandlabs/freactal-engine.
+It uses the [Freactal Store Engine-- @wonderlandlabs/freactal-engine.](https://github.com/bingomanatee/freactal3)
 
 ## API 
 

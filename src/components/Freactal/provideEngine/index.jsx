@@ -1,23 +1,17 @@
 import { Component } from 'react'; // eslint-disable-line import/no-extraneous-dependencies
 import FreactalContext from '../FreactalContext';
-import injectState from '../injectState';
 import Combine from '../Combine';
 
 /**
  * note - the Target property doesn't seem to work - its a webpack/babel thing.
  *
  * @param engine
- * @param Target
- * @param injectToTarget
+ * @param reducers ({stateReducer, actionReducer}) - optional methods to customize the blending of states/actions
  * @returns {Component}
  */
-function provideEngine(engine, Target, injectToTarget) {
+function provideEngine(engine, reducers = {}) {
   function wrapper(View) {
-    let InnerView = View;
-    if (injectToTarget) {
-      InnerView = injectState(View);
-    }
-
+    const InnerView = View;
 
     class StatefulView extends Component {
       static contextType = FreactalContext;
@@ -28,7 +22,7 @@ function provideEngine(engine, Target, injectToTarget) {
       render() {
         if (this.context) {
           return (
-            <Combine engines={[this.context, this.state.engine]}>
+            <Combine engines={[this.context, this.state.engine]} reducers={reducers}>
               <InnerView {...this.props} />
             </Combine>
           );
@@ -39,7 +33,7 @@ function provideEngine(engine, Target, injectToTarget) {
               (previousState) => {
                 if (previousState) {
                   return (
-                    <Combine engines={[previousState, this.state.engine]}>
+                    <Combine engines={[previousState, this.state.engine]} reducers={reducers}>
                       <InnerView {...this.props} />
                     </Combine>
                   );
@@ -62,9 +56,6 @@ function provideEngine(engine, Target, injectToTarget) {
     return StatefulView;
   }
 
-  if (Target) {
-    return wrapper(injectToTarget ? injectState(Target) : Target);
-  }
   return wrapper;
 }
 
